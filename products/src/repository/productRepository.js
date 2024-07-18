@@ -40,7 +40,7 @@ class ProductRepository {
         }
     }
 
-    async FindSelectedProduct(selectedIds){
+    async FindSelectedProducts(selectedIds){
         try {
             const products = await Product.find()
                 .where("_id")
