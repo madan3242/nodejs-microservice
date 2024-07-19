@@ -1,6 +1,8 @@
 const ProductService = require("../services/productService");
+const { CreateChannel } = require("../utils");
 
 const service = new ProductService();
+const channel = await CreateChannel();
 
 const createProduct = async (req, res, next) => {
     try {
