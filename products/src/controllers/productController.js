@@ -1,8 +1,12 @@
+const { CUSTOMER_BINDING_KEY, SHOPPING_BINDING_KEY } = require("../config");
 const ProductService = require("../services/productService");
-const { CreateChannel } = require("../utils");
+const { CreateChannel, PublishMessage } = require("../utils");
 
 const service = new ProductService();
-const channel = await CreateChannel();
+
+(async () => {
+    var channel = await CreateChannel();
+})();
 
 const createProduct = async (req, res, next) => {
     try {
@@ -18,7 +22,7 @@ const createProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
     try {
-        const {} = await service.GetProducts();
+        const { data } = await service.GetProducts();
         return res.status(200).json(data);
     } catch (error) {
         next(error);
@@ -45,11 +49,73 @@ const getProductsByCategory = async (req, res, next) => {
     }
 }
 
+const AddToWishlist = async (req, res, next) => {
+    const { _id } = req.user;
+
+    //get payload to send to customer service
+    const { data } = await service.GetProductPayload(_id, { productId: req.body._id }, 'ADD_TO_WISHLIST');
+
+    PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+
+    res.status(200).json(data.data.product);
+}
+
+
+const RemoveFromWishlist = async (req, res, next) => {
+    const { _id } = req.user;
+    const productId = req.params.id;
+
+    const { data } = await service.GetProductPayload(_id, { productId }, 'REMOVE_FROM_WISHLIST');
+
+    PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+
+    res.status(200).json(data.data.product);
+}
+
+const AddToCart = async (req, res, next) => {
+    const { _id } = req.user;
+
+    const { data } = await service.GetProductPayload(_id, { productId: req.body._id, qty: req.body.qty }, 'ADD_TO_CART');
+
+    PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+
+    PublishMessage(channel, SHOPPING_BINDING_KEY, JSON.stringify(data));
+
+    const response = {
+        product: data.data.product,
+        unit: data.data.qty
+    }
+
+    res.status(200).json(response);
+}
+
+const RemoveFromCart = async (req, res, next) => {
+    const { _id } = req.user;
+
+    const productId = req.params.id;
+
+    const { data } = await service.GetProductPayload(_id, { productId }, 'REMOVE_FROM_CART');
+
+    PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+
+    PublishMessage(channel, SHOPPING_BINDING_KEY, JSON.stringify(data));
+
+    const response = {
+        product: data.data.product,
+        unit: data.data.qty
+    }
+
+    res.status(200).json(response);}
+
 
 
 module.exports = {
     createProduct,
     getProducts,
     getProductDetails,
-    getProductsByCategory
+    getProductsByCategory,
+    AddToWishlist,
+    RemoveFromWishlist,
+    AddToCart,
+    RemoveFromCart,
 }

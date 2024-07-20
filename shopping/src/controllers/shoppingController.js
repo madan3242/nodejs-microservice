@@ -3,7 +3,7 @@ const ShoppingService = require("../services/shoppingService");
 const { CreateChannel, SubscribeMessage, PublishMessage } = require("../utils");
 
 const service = new ShoppingService();
-const channel = await CreateChannel();
+const channel = CreateChannel();
 SubscribeMessage(channel, service);
 
 const PlaceOrder = async (req, res, next) => {

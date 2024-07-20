@@ -1,7 +1,6 @@
 const CustomerService = require("../services/customerService");
 const { CreateChannel, SubscribeMessage } = require("../utils");
 
-
 const service = new CustomerService();
 const channel = await CreateChannel();
 SubscribeMessage(channel, service);
