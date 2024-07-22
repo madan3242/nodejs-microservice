@@ -4,9 +4,9 @@ WORKDIR /app/products
 
 ADD package.json .
 
-RUN npm i
+RUN npm install
 
-ADD . .
+COPY . .
 
 EXPOSE 8001
 

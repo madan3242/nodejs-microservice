@@ -1,13 +1,13 @@
 FROM node:20.15.1-alpine3.20
 
-WORKDIR /app/products
+WORKDIR /app/customers
 
 ADD package.json .
 
-RUN npm i
+RUN npm install
 
-ADD . .
+COPY . .
 
-EXPOSE 8001
+EXPOSE 8002
 
 CMD [ "npm", "start" ]
