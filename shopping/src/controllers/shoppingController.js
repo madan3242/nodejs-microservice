@@ -1,4 +1,4 @@
-const { CUSTOMER_BINDING_KEY } = require("../config");
+const { CUSTOMER_SERVICE } = require("../config");
 const ShoppingService = require("../services/shoppingService");
 const { CreateChannel, SubscribeMessage, PublishMessage } = require("../utils");
 
@@ -15,7 +15,7 @@ const PlaceOrder = async (req, res, next) => {
 
         const payload = await service.GetOrderPayload(_id, data, 'CREATE_ORDER');
 
-        PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(payload));
+        PublishMessage(channel, CUSTOMER_SERVICE, JSON.stringify(payload));
         
         return res.json(data);
     } catch (error) {

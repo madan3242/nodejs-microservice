@@ -1,5 +1,23 @@
+public/
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
 node_modules/
-dist/
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variable files
 .env
 .env.*
-public/
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+dist
+package-lock.json
+
+app_error.log
