@@ -15,4 +15,5 @@ module.exports = {
     EXCHANGE_NAME: 'ONLINE_SHOPPING',
     SHOPPING_BINDING_KEY: 'SHOPPING_SERVICE',
     CUSTOMER_BINDING_KEY: 'CUSTOMER_SERVICE',
+    connection : require("./connection"),
 };

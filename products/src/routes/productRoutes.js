@@ -1,5 +1,14 @@
 const { Router } = require("express");
-const { createProduct, getProducts, getProductDetails, getProductsByCategory, AddToWishlist, RemoveFromWishlist, RemoveFromCart, AddToCart } = require("../controllers/productController");
+const { 
+    createProduct, 
+    getProducts, 
+    getProductDetails, 
+    getProductsByCategory, 
+    AddToWishlist, 
+    RemoveFromWishlist, 
+    RemoveFromCart, 
+    AddToCart 
+} = require("../controllers/productController");
 const Auth = require("../middlewares/auth");
 
 const router = Router();

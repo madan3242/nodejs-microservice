@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const amqplib = require("amqplib");
-const { MESSAGE_BROKER_URL, EXCHANGE_NAME, APP_SECRET } = require("../config");
+const { MESSAGE_BROKER_URL, EXCHANGE_NAME, APP_SECRET, QUEUE_NAME, CUSTOMER_SERVICE } = require("../config");
 
 //Utility functions
 
@@ -49,7 +49,7 @@ module.exports.CreateChannel = async () => {
     try {
         const connection = await amqplib.connect(MESSAGE_BROKER_URL);
         const channel = await connection.createChannel();
-        await channel.assertExchange(EXCHANGE_NAME, 'direct', false);
+        await channel.assertQueue(EXCHANGE_NAME, 'direct', { durable: true });
         return channel;
     } catch (error) {
         throw error
@@ -57,9 +57,9 @@ module.exports.CreateChannel = async () => {
 }
 
 //Publish message
-module.exports.PublishMessage = async (channel, binding_key, message) => {
+module.exports.PublishMessage = async (channel, service, message) => {
     try {
-        await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
+        await channel.publish(EXCHANGE_NAME, service, Buffer.from(message));
         console.log(`Message has been sent ${message.toString()}`);
     } catch(error){
         throw error;
@@ -67,13 +67,21 @@ module.exports.PublishMessage = async (channel, binding_key, message) => {
 }
 
 //Subscribe message
-module.exports.SubscribeMessage = async (channel, service, binding_key) => {
-    const appQueue = await channel.assertQueue(QUEUE_NAME);
-    channel.bindQueue(appQueue, EXCHANGE_NAME, binding_key);
+module.exports.SubscribeMessage = async (channel, service) => {
+    await channel.assertExchange(EXCHANGE_NAME, "direct", { durable: true });
+    const q = await channel.assertQueue("", { exclusive: true });
+    console.log(`Waiting for messages in queue: ${q.queue}`);
 
-    channel.consume(appQueue, data => {
-        console.log('Recived data');
-        console.log(data?.content?.toString());
-        channel.ack(data);
-    })
+    channel.bindQueue(q.queue, EXCHANGE_NAME, CUSTOMER_SERVICE);
+
+    channel.consume(q.queue, (msg) => {
+        if (msg.content) {
+            console.log("This message is : ", msg?.content?.toString());
+            service.SubscribeEvents(msg?.content?.toString());
+        }
+        console.log("[X] recived");
+    },
+    {
+        noAck: true,
+    });
 }

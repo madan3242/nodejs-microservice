@@ -6,7 +6,7 @@ const customerRouter = require("./routes/customerRoutes");
 
 const app = express();
 
-await connection();
+connection();
 
 app.use(express.json({limit: '1mb'}));
 app.use(express.urlencoded({ extended: true, limit: '1mb'}));
@@ -14,4 +14,4 @@ app.use(cors());
 
 app.use("/api/v1", customerRouter);
 
-export default app;
+module.exports = app;

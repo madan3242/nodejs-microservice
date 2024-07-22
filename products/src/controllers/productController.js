@@ -4,9 +4,7 @@ const { CreateChannel, PublishMessage } = require("../utils");
 
 const service = new ProductService();
 
-(async () => {
-    var channel = await CreateChannel();
-})();
+const channel = await CreateChannel();
 
 const createProduct = async (req, res, next) => {
     try {
@@ -105,9 +103,8 @@ const RemoveFromCart = async (req, res, next) => {
         unit: data.data.qty
     }
 
-    res.status(200).json(response);}
-
-
+    res.status(200).json(response);
+}
 
 module.exports = {
     createProduct,

@@ -2,7 +2,7 @@ const CustomerService = require("../services/customerService");
 const { CreateChannel, SubscribeMessage } = require("../utils");
 
 const service = new CustomerService();
-const channel = await CreateChannel();
+const channel = CreateChannel();
 SubscribeMessage(channel, service);
 
 const Signup = async (req, res, next) => {
