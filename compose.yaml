@@ -1,10 +1,10 @@
 
 services:
-  mongo-db:
+  nosql-db:
     image: mvertes/alpine-mongo
     ports:
       - "27017:27017"
-    container_name: mongo-db
+    container_name: nosql-db
     volumes:
       - ./db/:/data/db
 
@@ -23,28 +23,28 @@ services:
       - "8001:8001"
     restart: always
     depends_on:
-      - "mongo-db"
+      - "nosql-db"
       - "rabbitmq"
     volumes:
-      - ./:./app
+      - ./:/app/
       - /app/products/node_modules
     
     env_file:
       - ./products/.env.dev
 
-  customers:
+  customer:
     build:
       context: ./customers
       dockerfile: Dockerfile
-    container_name: customers
+    container_name: customer
     ports:
       - "8002:8002"
     restart: always
     depends_on:
-      - "mongo-db"
+      - "nosql-db"
       - "rabbitmq"
     volumes:
-      - ./:./app
+      - ./:/app/
       - /app/customers/node_modules
     
     env_file:
@@ -59,10 +59,10 @@ services:
       - "8003:8003"
     restart: always
     depends_on:
-      - "mongo-db"
+      - "nosql-db"
       - "rabbitmq"
     volumes:
-      - ./:./app
+      - ./:/app/
       - /app/shopping/node_modules
     
     env_file:
@@ -74,7 +74,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - products
-      - customers
+      - customer
       - shopping
     ports:
       - 80:80
